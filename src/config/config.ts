@@ -38,10 +38,19 @@ class Config {
   public registerConfigChange() {
     return VscodeEvent.subscribeConfigChange((e) => {
       if (
-        e.affectsConfiguration(SupportConfigKey.languageKeyPrefix) ||
+        e.affectsConfiguration(SupportConfigKey.languagePackagePath) ||
         e.affectsConfiguration(SupportConfigKey.languagePackageExcludePath)
       ) {
+        this.localePath = VscodeEvent.getConfig<string>(
+          SupportConfigKey.languagePackagePath,
+          ''
+        );
+        this.localeExcludePath = VscodeEvent.getConfig<string>(
+          SupportConfigKey.languagePackageExcludePath,
+          ''
+        );
         core.findAllLanguageDictionary();
+        core.insertI18nChinese();
       }
 
       if (e.affectsConfiguration(SupportConfigKey.languageKeyPrefix)) {
@@ -49,6 +58,7 @@ class Config {
           SupportConfigKey.languageKeyPrefix,
           ''
         );
+        core.findAllLanguageDictionary();
         core.insertI18nChinese();
       }
 

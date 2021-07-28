@@ -1,3 +1,4 @@
+import { isMap, isString } from 'lodash';
 import config from '../config/config';
 import VscodeEvent from '../event/VscodeEvent';
 import { PluginInstance } from '../types/plugin';
@@ -19,7 +20,10 @@ class Plugin {
       if (plugin.default) {
         plugin = plugin.default;
       }
-      if (!this.checkPluginInstance(plugin)) {
+      if (!this.checkPluginIsFunction('fileName', plugin)) {
+        return;
+      }
+      if (!this.checkPluginIsFunction('getAllI18nKeyAndValue', plugin)) {
         return;
       }
       this.pluginInstance = plugin;
@@ -28,8 +32,11 @@ class Plugin {
     }
   }
 
-  public checkPluginInstance(plugin: PluginInstance): boolean {
-    if (plugin.fileName && typeof plugin.fileName !== 'function') {
+  public checkPluginIsFunction(
+    methodName: keyof PluginInstance,
+    plugin: PluginInstance
+  ): boolean {
+    if (plugin[methodName] && typeof plugin[methodName] !== 'function') {
       return false;
     }
     return true;
@@ -37,9 +44,24 @@ class Plugin {
 
   public fileName(fileName: string): string {
     if (this.pluginInstance?.fileName) {
-      return this.pluginInstance.fileName(fileName);
+      const result = this.pluginInstance.fileName(fileName);
+      if (isString(result)) {
+        return result;
+      }
+      return fileName;
     }
     return fileName;
+  }
+
+  public getAllI18nKeyAndValue(): Map<string, string> | undefined {
+    if (this.pluginInstance?.getAllI18nKeyAndValue) {
+      const result = this.pluginInstance.getAllI18nKeyAndValue();
+      if (isMap(result)) {
+        return result;
+      }
+      return undefined;
+    }
+    return undefined;
   }
 }
 
