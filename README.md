@@ -1,70 +1,118 @@
-# i18n-actionsky README
+# react-i18n-prompt README
 
-This is the README for your extension "i18n-actionsky". After writing up a brief description, we recommend including the following sections.
-
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+This is a extension that allows vscode to prompt a languages tips in tsx,jsx,ts and js file.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+This extension only support your project export language package like following:
+
+```js
+export default {
+  key: object | string;
+}
+```
+
+if your language package is not export by this type. you should provide a plugin script to tell extension how to get all language key and value.
+
+## Features
+
+After you install this extension in your vscode. vscode will prompt the content of the i18n key. like:
+![preview img](/assets/preview.png)
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+- `react-i18n-prompt.language-package-path`: the extension will find language content by this path. the default value is `src/locale/zh-cn/**/*.{ts,js,tsx,jsx}`
+  - if you set this item ike `src/locale/en/**/*.{ts,js,tsx,jsx}`. you can take english language tips.like:
+    ![preview-en](/assets/preview-en.png)
+  - so, you can modify this item to support any language you want.
+- `react-i18n-prompt.language-package-exclude-path`: the extension will exclude this path when extension find language content. default value is `src/locale/zh-cn/**/index.{ts,js,tsx,jsx}`
+- `react-i18n-prompt.language-key-prefix`: the extension will add the prefix path of i18n key. example:
+  - if your language file is like following:
+    ![locale folder](/assets/folder.png)
+    and the content of `common.ts` is like:
+    ![locale folder](/assets/locale-content.png)
+    the extension will find i18n key is
+    - `${language-key-prefix}.submit` => `提交`
+    - `${language-key-prefix}.cancel` => `取消`
+    - `${language-key-prefix}.reset` => `重复`
+  - this item support variable, current support:
+    - `${fileName}`: current locale file name.
+  - the default value of this item is: `${fileName}`
+    - so, the above example will find following key by default:
+      - `common.submit` => `提交`
+      - `common.cancel` => `取消`
+      - `common.reset` => `重复`
+- `react-i18n-prompt.i18n-name`: default value is `i18n`
+- `react-i18n-prompt.translate-function-name`: default value is `t`
+  - the above tow config is the extension will add language tips after `${react-i18n-prompt.i18n-name}.${react-i18n-prompt.translate-function-name}` and `${react-i18n-prompt.translate-function-name}` function params. so the extension will add language tips like following by default:
+  - `i18n.t(params {add tips in here})`
+  - `t(params {add tips in here})`
+- `react-i18n-prompt.plugin-path`: the plugin script path.
+  - if this item is start with '/', the extension will load plugin script by absolute path.
+  - if this item is start with other, the extension will load plugin script by relative path which base from current workspace.
 
-For example:
+## Plugin
 
-This extension contributes the following settings:
+the plugin must be a javascript file. and now plugin support following method.
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+```js
+module.exports = {
+  fileName: (fileName: string) => string;
+  getAllI18nKeyAndValue: () => Map<string, string>;
+};
+```
 
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- `fileName`
+  - if you have some prefix of i18n key is not equal fileName: For example:
+    - the locale language file name is `a.ts`, and the file content is:
+    ```ts
+    export default {
+      test: '测试',
+    };
+    ```
+    - but in the i18n register language package is:
+    ```js
+    import a from './zh-cn/a.ts';
+    export default {
+      translation: {
+        b: a,
+      },
+    };
+    ```
+    - then i18n will generator `b.test => 测试` key. but extension will find `a.test => 测试` by default. so, you can provide a plugin like following to fix this question:
+    ```js
+    module.exports = {
+      fileName(fileName) {
+        if (fileName === 'a') {
+          return 'b';
+        }
+        return fileName;
+      },
+    };
+    ```
+    - after this change. the extension will find `b.test => 测试` too.
+- `getAllI18nKeyAndValue`
+  - if your project export locale language package is not by following type:
+  ```js
+  export default {
+    key: object | string;
+  }
+  ```
+  the extension will can't find any key or value of i18n. but you can provide this method to tell extension how to find the key.
+  - tips:
+    - this item must be a function.
+    - the function which this item provide must return a Map<string, string>.the key of Map is the i18n key. the value of Map is the tips when the key appear
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+TODO:
 
-### 1.0.0
+- <input type="checkbox" checked /> vscode can prompt the language detail value of i18n key.
+- <input type="checkbox" /> prompt all related i18n key when user input i18n key.
+- <input type="checkbox" /> prompt all related i18n key when user input language value if language value exist in locale language package.
+- <input type="checkbox" /> vscode will throw a error when user input a i18n key which not exist locale language package.
+- <input type="checkbox" /> i18n key can click and jump to locale language file.
 
-Initial release of ...
+### 0.0.1
 
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+- [feature]: vscode can prompt the language detail value of i18n key.
