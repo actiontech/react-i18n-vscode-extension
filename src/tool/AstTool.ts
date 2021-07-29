@@ -163,9 +163,13 @@ class AstTool {
           return;
         }
         if (this.isObjectExpression(property.value)) {
+          let newKey = key;
+          if (prefix.length > 0) {
+            newKey = `${prefix}.${newKey}`;
+          }
           this.getAllI18nKeyAndValueFromObject(
             property.value,
-            `${prefix}.${key}`,
+            newKey,
             dictionary
           );
         } else if (this.isStringLiteral(property.value)) {
@@ -173,7 +177,11 @@ class AstTool {
           if (value.includes('\n')) {
             value = value.replace('\n', '').replace('\r', '');
           }
-          dictionary.set(`${prefix}.${key}`, value);
+          let newKey = key;
+          if (prefix.length > 0) {
+            newKey = `${prefix}.${newKey}`;
+          }
+          dictionary.set(newKey, value);
         }
       });
     }
@@ -203,19 +211,19 @@ class AstTool {
   }
 
   private isIdentifier(node: t.Node): node is t.Identifier {
-    return node.type === 'Identifier';
+    return t.isIdentifier(node);
   }
 
   private isStringLiteral(node: t.Node): node is t.StringLiteral {
-    return node.type === 'StringLiteral';
+    return t.isStringLiteral(node);
   }
 
   private isProperty(node: t.Node): node is t.ObjectProperty {
-    return node.type === 'ObjectProperty';
+    return t.isObjectProperty(node);
   }
 
   private isObjectExpression(node: t.Node): node is t.ObjectExpression {
-    return node.type === 'ObjectExpression';
+    return t.isObjectExpression(node);
   }
 }
 

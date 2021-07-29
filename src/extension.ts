@@ -26,6 +26,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const activeEditor = vscode.window.activeTextEditor;
   plugin.registerPlugin();
+  plugin.watchPluginFileChange();
+  core.watchLanguagePackageChanged();
   await core.findAllLanguageDictionary();
   if (activeEditor) {
     core.setActiveEditor(activeEditor);
@@ -39,4 +41,7 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+  core.dispose();
+  plugin.dispose();
+}

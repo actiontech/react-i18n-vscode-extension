@@ -79,6 +79,10 @@ class VscodeEvent {
     }
     return temp[0].uri.path;
   }
+
+  public watchFileChanged(path: string) {
+    return vscode.workspace.createFileSystemWatcher(path);
+  }
 }
 
 export default new VscodeEvent();

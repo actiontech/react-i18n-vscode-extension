@@ -37,14 +37,17 @@ class Config {
 
   public registerConfigChange() {
     return VscodeEvent.subscribeConfigChange((e) => {
-      if (
-        e.affectsConfiguration(SupportConfigKey.languagePackagePath) ||
-        e.affectsConfiguration(SupportConfigKey.languagePackageExcludePath)
-      ) {
+      if (e.affectsConfiguration(SupportConfigKey.languagePackagePath)) {
         this.localePath = VscodeEvent.getConfig<string>(
           SupportConfigKey.languagePackagePath,
           ''
         );
+        core.watchLanguagePackageChanged();
+      }
+      if (
+        e.affectsConfiguration(SupportConfigKey.languagePackagePath) ||
+        e.affectsConfiguration(SupportConfigKey.languagePackageExcludePath)
+      ) {
         this.localeExcludePath = VscodeEvent.getConfig<string>(
           SupportConfigKey.languagePackageExcludePath,
           ''
@@ -79,11 +82,13 @@ class Config {
       }
 
       if (e.affectsConfiguration(SupportConfigKey.pluginPath)) {
-        this.translateFunctionName = VscodeEvent.getConfig<string>(
+        this.pluginPath = VscodeEvent.getConfig<string>(
           SupportConfigKey.pluginPath,
           ''
         );
+        plugin.watchPluginFileChange();
         plugin.registerPlugin();
+        core.findAllLanguageDictionary();
       }
     });
   }

@@ -8,6 +8,7 @@ import plugin from '../plugin/plugin';
 import { setTimeout } from 'timers';
 import VscodeStatusBarItem from '../tool/VscodeStatusBarItem';
 import { SupportCommand } from '../config/enum';
+import { getRealPath } from '../tool/Tool';
 
 class Core {
   private _activeEditor?: vscode.TextEditor;
@@ -15,6 +16,7 @@ class Core {
   private _languageDictionary = new Map<string, string>();
   private _textChangeTimer: NodeJS.Timer | undefined;
   private _statusBarItem: VscodeStatusBarItem;
+  private _localeLanguageFileWatcher: vscode.FileSystemWatcher | undefined;
 
   constructor() {
     this._statusBarItem = new VscodeStatusBarItem(
@@ -104,6 +106,28 @@ class Core {
     return VscodeEvent.registerCommand(SupportCommand.refreshLanguage, () => {
       _this.findAllLanguageDictionary();
     });
+  }
+
+  public watchLanguagePackageChanged() {
+    if (this._localeLanguageFileWatcher) {
+      this._localeLanguageFileWatcher.dispose();
+    }
+    const watcher = VscodeEvent.watchFileChanged(
+      getRealPath(config.localePath)
+    );
+    watcher.onDidChange(() => {
+      this.findAllLanguageDictionary();
+    });
+    watcher.onDidDelete(() => {
+      this.findAllLanguageDictionary();
+    });
+    this._localeLanguageFileWatcher = watcher;
+  }
+
+  public dispose() {
+    if (this._localeLanguageFileWatcher) {
+      this._localeLanguageFileWatcher.dispose();
+    }
   }
 }
 
