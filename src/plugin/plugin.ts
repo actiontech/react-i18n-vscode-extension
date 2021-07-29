@@ -1,20 +1,22 @@
 import { isMap, isString } from 'lodash';
+import { FileSystemWatcher } from 'vscode';
 import config from '../config/config';
+import core from '../core/core';
 import VscodeEvent from '../event/VscodeEvent';
 import { PluginInstance } from '../types/plugin';
+import { getRealPath } from '../tool/Tool';
 
 class Plugin {
+  private _pluginFileWatcher?: FileSystemWatcher;
   public pluginInstance?: PluginInstance = undefined;
 
   public registerPlugin() {
     let path = config.pluginPath;
     if (typeof path !== 'string' || path.length === 0) {
+      this.pluginInstance = undefined;
       return;
     }
-    const workspaceUrl = VscodeEvent.getWorkspacePath();
-    if (!path.startsWith('/')) {
-      path = `${workspaceUrl}/${path}`;
-    }
+    path = getRealPath(path);
     try {
       let plugin = require(path);
       if (plugin.default) {
@@ -62,6 +64,27 @@ class Plugin {
       return undefined;
     }
     return undefined;
+  }
+
+  public watchPluginFileChange() {
+    let path = config.pluginPath;
+    path = getRealPath(path);
+    if (this._pluginFileWatcher) {
+      this._pluginFileWatcher.dispose();
+    }
+    if (path.length === 0) {
+      return;
+    }
+    this._pluginFileWatcher = VscodeEvent.watchFileChanged(path);
+    this._pluginFileWatcher.onDidChange(() => {
+      delete require.cache[path];
+      this.registerPlugin();
+      core.findAllLanguageDictionary();
+    });
+  }
+
+  public dispose() {
+    this._pluginFileWatcher?.dispose();
   }
 }
 
