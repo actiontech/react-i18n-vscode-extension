@@ -18,6 +18,7 @@
   "activationEvents": [
     "*"
   ],
+  "icon": "assets/logo.png",
   "homepage": "https://github.com/actiontech/react-i18n-vscode-extension/blob/master/README.md",
   "bugs": {
     "url": "https://github.com/actiontech/react-i18n-vscode-extension/issues"
