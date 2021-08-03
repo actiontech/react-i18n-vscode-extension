@@ -19,6 +19,9 @@ if your language package is not export by this type. you should provide a plugin
 After you install this extension in your vscode. vscode will prompt the content of the i18n key. like:
 ![preview img](/assets/preview.png)
 
+vscode will prompt the i18n path when you input a i18n key. like:
+![preview img](/assets/prompt-preview.gif)
+
 ## Extension Settings
 
 - `react-i18n-prompt.language-package-path`: the extension will find language content by this path. the default value is `src/locale/zh-cn/**/*.{ts,js,tsx,jsx}`
@@ -102,16 +105,18 @@ module.exports = {
   - tips:
     - this item must be a function.
     - the function which this item provide must return a Map<string, string>.the key of Map is the i18n key. the value of Map is the tips when the key appear
+  - if you provide this method, extension will show following tips when extension load plugin successfully.
+    ![preview-en](/assets/plugin-tips.png)
 
 ## Release Notes
 
 TODO:
 
-- <input type="checkbox" checked /> vscode can prompt the language detail value of i18n key.
-- <input type="checkbox" /> prompt all related i18n key when user input i18n key.
-- <input type="checkbox" /> prompt all related i18n key when user input language value if language value exist in locale language package.
-- <input type="checkbox" /> vscode will throw a error when user input a i18n key which not exist locale language package.
-- <input type="checkbox" /> i18n key can click and jump to locale language file.
+- [v] vscode can prompt the language detail value of i18n key.
+- [v] prompt all related i18n key when user input i18n key.
+- [v] prompt all related i18n key when user input language value if language value exist in locale language package.
+- [] vscode will throw a error when user input a i18n key which not exist locale language package.
+- [] i18n key can click and jump to locale language file.
 
 ### 0.0.1
 
