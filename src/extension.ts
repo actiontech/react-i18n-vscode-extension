@@ -36,6 +36,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(config.registerConfigChange());
   context.subscriptions.push(core.registerTextChange());
   context.subscriptions.push(core.registerRefreshCommand());
+  context.subscriptions.push(...core.registerLanguageCompletion());
 
   // context.subscriptions.push(disposable);
 }

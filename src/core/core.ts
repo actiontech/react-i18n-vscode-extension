@@ -9,6 +9,7 @@ import { setTimeout } from 'timers';
 import VscodeStatusBarItem from '../tool/VscodeStatusBarItem';
 import { SupportCommand } from '../config/enum';
 import { getRealPath } from '../tool/Tool';
+import { TextDocument } from 'vscode';
 
 class Core {
   private _activeEditor?: vscode.TextEditor;
@@ -122,6 +123,51 @@ class Core {
       this.findAllLanguageDictionary();
     });
     this._localeLanguageFileWatcher = watcher;
+  }
+
+  public registerLanguageCompletion(): vscode.Disposable[] {
+    const disposable: vscode.Disposable[] = [];
+    const _this = this;
+    for (let i = 0; i < config.supportFileType.length; i++) {
+      disposable.push(
+        VscodeEvent.registerLanguageCompletion(
+          {
+            scheme: 'file',
+            language: config.supportFileType[i],
+          },
+          {
+            provideCompletionItems(
+              document: TextDocument,
+              position: vscode.Position
+            ): Thenable<vscode.CompletionItem[]> {
+              const start = new vscode.Position(position.line, 0);
+              const end = new vscode.Position(position.line, 99999);
+              const range: vscode.Range = new vscode.Range(start, end);
+              const text: string = document.getText(range).trim();
+              const rawText: RegExpMatchArray | null =
+                text.match(/t\(\'(.*)\'\)/);
+              if (!rawText) {
+                return Promise.resolve([]);
+              }
+              const items = [];
+              for (const [key, value] of _this._languageDictionary.entries()) {
+                const item = new vscode.CompletionItem(
+                  `${key} - ${value}`,
+                  vscode.CompletionItemKind.Field
+                );
+                item.filterText = `${key} - ${value}`;
+                item.insertText = key;
+                item.detail = value;
+                items.push(item);
+              }
+              return Promise.resolve(items);
+            },
+          },
+          "'"
+        )
+      );
+    }
+    return disposable;
   }
 
   public dispose() {

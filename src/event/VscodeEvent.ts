@@ -83,6 +83,18 @@ class VscodeEvent {
   public watchFileChanged(path: string) {
     return vscode.workspace.createFileSystemWatcher(path);
   }
+
+  public registerLanguageCompletion(
+    selector: vscode.DocumentSelector,
+    provider: vscode.CompletionItemProvider<vscode.CompletionItem>,
+    ...triggerCharacters: string[]
+  ) {
+    return vscode.languages.registerCompletionItemProvider(
+      selector,
+      provider,
+      ...triggerCharacters
+    );
+  }
 }
 
 export default new VscodeEvent();
