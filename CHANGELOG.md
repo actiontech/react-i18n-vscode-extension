@@ -1,9 +1,9 @@
 # Change Log
 
-All notable changes to the "i18n-actionsky" extension will be documented in this file.
+All notable changes to the react-i18n-prompt extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [0.0.1]
 
-## [Unreleased]
-
-- Initial release
+- vscode can prompt the language detail value of i18n key.
+- prompt all related i18n key when user input i18n key.
+- prompt all related i18n key when user input language value if language value exist in locale language package.
