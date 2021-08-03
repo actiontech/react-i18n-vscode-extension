@@ -3,7 +3,7 @@
   "displayName": "React I18n Prompt Tool",
   "description": "i18n prompt tool'",
   "version": "0.0.1",
-  "publisher": "react-i18n-vscode-extention",
+  "publisher": "Rain",
   "engines": {
     "vscode": "^1.58.0"
   },
@@ -18,6 +18,14 @@
   "activationEvents": [
     "*"
   ],
+  "homepage": "https://github.com/actiontech/react-i18n-vscode-extension/blob/master/README.md",
+  "bugs": {
+    "url": "https://github.com/actiontech/react-i18n-vscode-extension/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/actiontech/react-i18n-vscode-extension"
+  },
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
