@@ -1,5 +1,6 @@
 export type ParamsLocation = {
   paramsValue: string;
+  notFind: boolean;
   desc: string;
   start: {
     line: number;
