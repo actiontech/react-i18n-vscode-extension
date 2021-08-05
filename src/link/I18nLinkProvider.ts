@@ -18,7 +18,6 @@ class I18nLinkProvider implements DocumentLinkProvider {
     _: CancellationToken
   ): ProviderResult<DocumentLink[]> {
     const result: DocumentLink[] = [];
-    console.log(1);
     const ast = this._astTool.parse(document.getText());
     if (AstTool.astParseError(ast)) {
       return;
@@ -35,7 +34,6 @@ class I18nLinkProvider implements DocumentLinkProvider {
       }
       const start = new Position(param.start.line, param.start.column);
       const end = new Position(param.end.line, param.end.column);
-      console.log(languageFile.get(param.paramsValue));
       result.push(
         new DocumentLink(
           new Range(start, end),
