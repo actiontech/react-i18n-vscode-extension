@@ -27,10 +27,10 @@ class Core {
 
   public setActiveEditor(editor?: vscode.TextEditor) {
     this._activeEditor = editor;
-    this.insertI18nChinese();
+    this.insertI18nChinese(true);
   }
 
-  public insertI18nChinese() {
+  public insertI18nChinese(showErrorMessage: boolean = false) {
     if (!this._activeEditor) {
       return;
     }
@@ -45,7 +45,8 @@ class Core {
 
     const paramsLocations = this._astTool.getAllParamsFromAst(
       ast,
-      this._languageDictionary
+      this._languageDictionary,
+      showErrorMessage
     );
     VscodeEvent.insertI18nChinese(this._activeEditor, paramsLocations);
   }
@@ -98,6 +99,16 @@ class Core {
         this._textChangeTimer = setTimeout(() => {
           this.insertI18nChinese();
         }, 100);
+      }
+    });
+  }
+
+  public registerOnSave() {
+    return VscodeEvent.subscribeFileOnSave(() => {
+      if (this._activeEditor) {
+        setTimeout(() => {
+          this.insertI18nChinese(true);
+        }, 500);
       }
     });
   }

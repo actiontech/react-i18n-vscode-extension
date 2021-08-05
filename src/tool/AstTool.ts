@@ -59,9 +59,33 @@ class AstTool {
     }
   }
 
+  public createParamsLocation(
+    languageDictionary: Map<string, string>,
+    node: t.StringLiteral & { loc: t.SourceLocation }
+  ) {
+    const notFind = !languageDictionary.has(node.value);
+    const languageValue = languageDictionary.get(node.value) ?? '';
+    const desc = notFind ? 'Not find this key' : languageValue;
+    const position: ParamsLocation = {
+      paramsValue: node.value,
+      notFind: notFind,
+      desc: desc,
+      start: {
+        line: node.loc.start.line - 1,
+        column: node.loc.start.column,
+      },
+      end: {
+        line: node.loc.end.line - 1,
+        column: node.loc.end.column,
+      },
+    };
+    return position;
+  }
+
   public getAllParamsFromAst(
     ast: t.File,
-    languageDictionary: Map<string, string>
+    languageDictionary: Map<string, string>,
+    showErrorMessage: boolean = false
   ): ParamsLocation[] {
     const paramsLocations: ParamsLocation[] = [];
     const _this = this;
@@ -70,28 +94,17 @@ class AstTool {
       CallExpression(path) {
         const node = path.node;
         const callee = node.callee;
-        let languageValue = '';
         if (_this.isI18nCallee(callee)) {
           const args = node.arguments;
           if (Array.isArray(args) && args.length > 0) {
             const arg = args[0];
             if (_this.isStringLiteral(arg) && arg.loc) {
-              if (languageDictionary.has(arg.value)) {
-                languageValue = languageDictionary.get(arg.value) as string;
-                const position: ParamsLocation = {
-                  paramsValue: arg.value,
-                  desc: languageValue,
-                  start: {
-                    line: arg.loc.start.line - 1,
-                    column: arg.loc.start.column,
-                  },
-                  end: {
-                    line: arg.loc.end.line - 1,
-                    column: arg.loc.end.column,
-                  },
-                };
-                paramsLocations.push(position);
+              if (!languageDictionary.has(arg.value) && !showErrorMessage) {
+                return;
               }
+              paramsLocations.push(
+                _this.createParamsLocation(languageDictionary, arg as any)
+              );
             }
           }
         } else if (_this.isI18nHooksCallee(callee)) {
@@ -99,22 +112,12 @@ class AstTool {
           if (Array.isArray(args) && args.length > 0) {
             const arg = args[0];
             if (_this.isStringLiteral(arg) && arg.loc) {
-              if (languageDictionary.has(arg.value)) {
-                languageValue = languageDictionary.get(arg.value) as string;
-                const position: ParamsLocation = {
-                  paramsValue: arg.value,
-                  desc: languageValue,
-                  start: {
-                    line: arg.loc.start.line - 1,
-                    column: arg.loc.start.column,
-                  },
-                  end: {
-                    line: arg.loc.end.line - 1,
-                    column: arg.loc.end.column,
-                  },
-                };
-                paramsLocations.push(position);
+              if (!languageDictionary.has(arg.value) && !showErrorMessage) {
+                return;
               }
+              paramsLocations.push(
+                _this.createParamsLocation(languageDictionary, arg as any)
+              );
             }
           }
         }

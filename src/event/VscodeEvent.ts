@@ -13,6 +13,30 @@ class VscodeEvent {
     });
   }
 
+  public createChineseTips(desc: string) {
+    return {
+      contentText: `> ${desc}`,
+      color: '#807f7e',
+      textDecoration: `;
+        font-size: 12px;
+        margin-left: 5px;
+        margin-right: 5px;
+      `,
+    };
+  }
+
+  public createErrorTips(desc: string) {
+    return {
+      contentText: `> ${desc}`,
+      color: '#ff0000',
+      textDecoration: `;
+        font-size: 12px;
+        margin-left: 5px;
+        margin-right: 5px;
+      `,
+    };
+  }
+
   public insertI18nChinese(
     activeEditor: vscode.TextEditor,
     params: ParamsLocation[]
@@ -26,15 +50,9 @@ class VscodeEvent {
       languageFunctions.push({
         range: new vscode.Range(start, end),
         renderOptions: {
-          after: {
-            contentText: `> ${param.desc}`,
-            color: '#807f7e',
-            textDecoration: `;
-    							font-size: 12px;
-                  margin-left: 5px;
-                  margin-right: 5px;
-    					`,
-          },
+          after: param.notFind
+            ? this.createErrorTips(param.desc)
+            : this.createChineseTips(param.desc),
         },
       });
     });
@@ -66,6 +84,10 @@ class VscodeEvent {
 
   public subscribeTextChange(cb: (e: vscode.TextDocumentChangeEvent) => any) {
     return vscode.workspace.onDidChangeTextDocument(cb);
+  }
+
+  public subscribeFileOnSave(cb: (e: vscode.TextDocument) => any) {
+    return vscode.workspace.onDidSaveTextDocument(cb);
   }
 
   public registerCommand(command: string, cb: (...args: any[]) => any) {

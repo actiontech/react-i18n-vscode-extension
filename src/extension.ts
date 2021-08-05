@@ -35,6 +35,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(VscodeEvent.registerEditorChange());
   context.subscriptions.push(config.registerConfigChange());
   context.subscriptions.push(core.registerTextChange());
+  context.subscriptions.push(core.registerOnSave());
   context.subscriptions.push(core.registerRefreshCommand());
   context.subscriptions.push(...core.registerLanguageCompletion());
 
