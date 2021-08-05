@@ -167,8 +167,9 @@ class Core {
               const end = new vscode.Position(position.line, 99999);
               const range: vscode.Range = new vscode.Range(start, end);
               const text: string = document.getText(range).trim();
-              const rawText: RegExpMatchArray | null =
-                text.match(/t\(\'(.*)\'\)/);
+              const rawText: RegExpMatchArray | null = text.match(
+                /(?<![\w]+)t\(\'(.*)\'\)/
+              );
               if (!rawText) {
                 return Promise.resolve([]);
               }
