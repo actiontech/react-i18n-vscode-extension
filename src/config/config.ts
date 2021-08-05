@@ -34,6 +34,15 @@ class Config {
     SupportConfigKey.pluginPath,
     ''
   );
+  public unExistTipsVisible = VscodeEvent.getConfig<boolean>(
+    SupportConfigKey.unExistTipsVisible,
+    false
+  );
+
+  public languageTipsVisible = VscodeEvent.getConfig<boolean>(
+    SupportConfigKey.languageTipsVisible,
+    true
+  );
 
   public registerConfigChange() {
     return VscodeEvent.subscribeConfigChange((e) => {
@@ -89,6 +98,21 @@ class Config {
         plugin.watchPluginFileChange();
         plugin.registerPlugin();
         core.findAllLanguageDictionary();
+      }
+
+      if (e.affectsConfiguration(SupportConfigKey.unExistTipsVisible)) {
+        this.unExistTipsVisible = VscodeEvent.getConfig<boolean>(
+          SupportConfigKey.unExistTipsVisible,
+          false
+        );
+        core.insertI18nChinese(true);
+      }
+
+      if (e.affectsConfiguration(SupportConfigKey.languageTipsVisible)) {
+        this.languageTipsVisible = VscodeEvent.getConfig<boolean>(
+          SupportConfigKey.languageTipsVisible,
+          true
+        );
       }
     });
   }

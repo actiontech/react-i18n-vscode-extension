@@ -51,11 +51,14 @@ class Core {
     if (AstTool.astParseError(ast)) {
       return;
     }
-
+    let showError = showErrorMessage;
+    if (!config.unExistTipsVisible) {
+      showError = false;
+    }
     const paramsLocations = this._astTool.getAllParamsFromAst(
       ast,
       this._languageDictionary,
-      showErrorMessage
+      showError
     );
     VscodeEvent.insertI18nChinese(this._activeEditor, paramsLocations);
   }
@@ -163,6 +166,9 @@ class Core {
               document: TextDocument,
               position: vscode.Position
             ): Thenable<vscode.CompletionItem[]> {
+              if (!config.languageTipsVisible) {
+                return Promise.resolve([]);
+              }
               const start = new vscode.Position(position.line, 0);
               const end = new vscode.Position(position.line, 99999);
               const range: vscode.Range = new vscode.Range(start, end);

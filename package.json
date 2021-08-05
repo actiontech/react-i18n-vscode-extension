@@ -61,6 +61,14 @@
           },
           "react-i18n-prompt.plugin-path": {
             "type": "string"
+          },
+          "react-i18n-prompt.show-not-exist-tips": {
+            "type": "boolean",
+            "default": false
+          },
+          "react-i18n-prompt.language-tips-visible": {
+            "type": "boolean",
+            "default": true
           }
         }
       }
