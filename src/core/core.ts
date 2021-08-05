@@ -15,6 +15,7 @@ class Core {
   private _activeEditor?: vscode.TextEditor;
   private _astTool = AstTool.getInstance();
   private _languageDictionary = new Map<string, string>();
+  private _languageFile = new Map<string, vscode.Uri>();
   private _textChangeTimer: NodeJS.Timer | undefined;
   private _statusBarItem: VscodeStatusBarItem;
   private _localeLanguageFileWatcher: vscode.FileSystemWatcher | undefined;
@@ -23,6 +24,14 @@ class Core {
     this._statusBarItem = new VscodeStatusBarItem(
       SupportCommand.refreshLanguage
     );
+  }
+
+  public getLanguageDictionary() {
+    return this._languageDictionary;
+  }
+
+  public getLanguageFile() {
+    return this._languageFile;
   }
 
   public setActiveEditor(editor?: vscode.TextEditor) {
@@ -63,6 +72,7 @@ class Core {
       return;
     }
     this._languageDictionary = new Map();
+    this._languageFile = new Map();
     const uris = await VscodeEvent.getFiles(
       config.localePath,
       config.localeExcludePath
@@ -77,11 +87,13 @@ class Core {
       fileName = plugin.fileName(fileName);
       let prefix = config.i18nKeyPrefix;
       prefix = prefix.replace('${fileName}', fileName);
-      this._astTool.getAllI18nKeyAndValue(
-        ast,
-        prefix,
-        this._languageDictionary
-      );
+      const currentMap = this._astTool.getAllI18nKeyAndValue(ast, prefix);
+      for (const [key, value] of currentMap.entries()) {
+        this._languageDictionary.set(key, value.value);
+        const fsPath = uri.fsPath;
+        const newUri = vscode.Uri.parse(`${fsPath}#${value.line}`);
+        this._languageFile.set(key, newUri);
+      }
     }
     this._statusBarItem.notify(
       'eye',

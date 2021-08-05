@@ -1,7 +1,7 @@
 import { parse } from '@babel/parser';
 import * as t from '@babel/types';
 import traverse from '@babel/traverse';
-import { ParamsLocation } from '../types/common';
+import { LanguageValue, ParamsLocation } from '../types/common';
 import config from '../config/config';
 
 class AstTool {
@@ -128,10 +128,10 @@ class AstTool {
 
   public getAllI18nKeyAndValue(
     ast: t.File | t.ObjectExpression,
-    prefix: string,
-    dictionary: Map<string, string>
-  ) {
+    prefix: string
+  ): Map<string, LanguageValue> {
     const _this = this;
+    const map = new Map<string, LanguageValue>();
     traverse(ast, {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       ExportDefaultDeclaration(path) {
@@ -139,20 +139,17 @@ class AstTool {
         if (!_this.isObjectExpression(node.declaration)) {
           return;
         }
-        _this.getAllI18nKeyAndValueFromObject(
-          node.declaration,
-          prefix,
-          dictionary
-        );
+        _this.getAllI18nKeyAndValueFromObject(node.declaration, prefix, map);
         path.stop();
       },
     });
+    return map;
   }
 
   public getAllI18nKeyAndValueFromObject(
     node: t.ObjectExpression,
     prefix: string,
-    dictionary: Map<string, string>
+    dictionary: Map<string, LanguageValue>
   ) {
     if (node.properties.length > 0) {
       node.properties.forEach((property) => {
@@ -184,7 +181,10 @@ class AstTool {
           if (prefix.length > 0) {
             newKey = `${prefix}.${newKey}`;
           }
-          dictionary.set(newKey, value);
+          dictionary.set(newKey, {
+            value,
+            line: property.value.loc?.start.line ?? 1,
+          });
         }
       });
     }

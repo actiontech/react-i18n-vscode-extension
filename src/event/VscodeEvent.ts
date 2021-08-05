@@ -117,6 +117,13 @@ class VscodeEvent {
       ...triggerCharacters
     );
   }
+
+  public registerDocumentLinkProvider(
+    fileType: string,
+    provider: vscode.DocumentLinkProvider
+  ) {
+    return vscode.languages.registerDocumentLinkProvider(fileType, provider);
+  }
 }
 
 export default new VscodeEvent();
