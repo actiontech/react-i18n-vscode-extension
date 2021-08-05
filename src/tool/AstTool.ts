@@ -174,8 +174,8 @@ class AstTool {
           );
         } else if (this.isStringLiteral(property.value)) {
           let value = property.value.value;
-          if (value.includes('\n')) {
-            value = value.replace('\n', '').replace('\r', '');
+          if (value.includes('\n') || value.includes('\r')) {
+            value = value.replace(/\n/g, '').replace(/\r/g, '');
           }
           let newKey = key;
           if (prefix.length > 0) {
