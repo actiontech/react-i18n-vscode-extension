@@ -5,6 +5,7 @@ import core from '../core/core';
 import VscodeEvent from '../event/VscodeEvent';
 import { PluginInstance } from '../types/plugin';
 import { getRealPath } from '../tool/Tool';
+import { LanguageValue, PluginLanguageValue } from '../types/common';
 
 class Plugin {
   private _pluginFileWatcher?: FileSystemWatcher;
@@ -55,7 +56,7 @@ class Plugin {
     return fileName;
   }
 
-  public getAllI18nKeyAndValue(): Map<string, string> | undefined {
+  public getAllI18nKeyAndValue(): Map<string, PluginLanguageValue> | undefined {
     if (this.pluginInstance?.getAllI18nKeyAndValue) {
       const result = this.pluginInstance.getAllI18nKeyAndValue();
       if (isMap(result)) {

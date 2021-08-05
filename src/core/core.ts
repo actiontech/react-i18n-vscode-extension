@@ -67,7 +67,19 @@ class Core {
     this._statusBarItem.notify('eye', 'Looking for i18n path...', false);
     const pluginFind = plugin.getAllI18nKeyAndValue();
     if (pluginFind !== undefined) {
-      this._languageDictionary = pluginFind;
+      this._languageDictionary = new Map<string, string>();
+      this._languageFile = new Map<string, vscode.Uri>();
+      for (const [key, value] of pluginFind.entries()) {
+        if (!!value.value) {
+          this._languageDictionary.set(key, value.value);
+        }
+        if (!!value.line && !!value.languageFilePath) {
+          this._languageFile.set(
+            key,
+            vscode.Uri.parse(`${value.languageFilePath}#${value.line}`)
+          );
+        }
+      }
       this._statusBarItem.notify(
         'eye',
         `Looking for i18n path complete and find ${this._languageDictionary.size} keys from plugin`
