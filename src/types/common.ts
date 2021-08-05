@@ -13,3 +13,8 @@ export type ParamsLocation = {
     char?: string;
   };
 };
+
+export type LanguageValue = {
+  value: string;
+  line: number;
+};
