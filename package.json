@@ -1,8 +1,8 @@
 {
   "name": "react-i18n-prompt",
   "displayName": "React I18n Prompt Tool",
-  "description": "i18n prompt tool'",
-  "version": "0.0.1",
+  "description": "i18n prompt tool, show language of i18n key, add link to i18n key, prompt i18n key when user input i18n key",
+  "version": "0.0.2",
   "publisher": "Rain",
   "engines": {
     "vscode": "^1.58.0"
