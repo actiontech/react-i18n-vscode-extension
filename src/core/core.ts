@@ -185,9 +185,10 @@ class Core {
               const end = new vscode.Position(position.line, 99999);
               const range: vscode.Range = new vscode.Range(start, end);
               const text: string = document.getText(range).trim();
-              const rawText: RegExpMatchArray | null = text.match(
-                /(?<![\w]+)t\(\'(.*)\'\)/
+              const reg = new RegExp(
+                `(?<![\\w]+)${config.translateFunctionName}\\(['"\`](.*)['"\`]\\)`
               );
+              const rawText: RegExpMatchArray | null = text.match(reg);
               if (!rawText) {
                 return Promise.resolve([]);
               }
@@ -205,7 +206,9 @@ class Core {
               return Promise.resolve(items);
             },
           },
-          "'"
+          "'",
+          '"',
+          '`'
         )
       );
     }
