@@ -18,3 +18,9 @@ export type LanguageValue = {
   value: string;
   line: number;
 };
+
+export type PluginLanguageValue = {
+  value: string;
+  line?: number;
+  languageFilePath?: string;
+};
