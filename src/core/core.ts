@@ -74,10 +74,10 @@ class Core {
           this._languageDictionary.set(key, value.value);
         }
         if (!!value.line && !!value.languageFilePath) {
-          this._languageFile.set(
-            key,
-            vscode.Uri.parse(`${value.languageFilePath}#${value.line}`)
-          );
+          const uri = vscode.Uri.file(value.languageFilePath).with({
+            fragment: `${value.line}`,
+          });
+          this._languageFile.set(key, uri);
         }
       }
       this._statusBarItem.notify(
@@ -105,9 +105,7 @@ class Core {
       const currentMap = this._astTool.getAllI18nKeyAndValue(ast, prefix);
       for (const [key, value] of currentMap.entries()) {
         this._languageDictionary.set(key, value.value);
-        const fsPath = uri.fsPath;
-        const newUri = vscode.Uri.parse(`${fsPath}#${value.line}`);
-        this._languageFile.set(key, newUri);
+        this._languageFile.set(key, uri.with({ fragment: `${value.line}` }));
       }
     }
     this._statusBarItem.notify(
