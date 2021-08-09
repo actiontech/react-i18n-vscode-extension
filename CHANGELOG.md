@@ -2,6 +2,10 @@
 
 All notable changes to the react-i18n-prompt extension will be documented in this file.
 
+### [0.0.3]
+
+- [bugfix]: the link of i18n key is not working in windows operator system.
+
 ### [0.0.2]
 
 - [feature]: you can click i18n key and jump to language package file.
