@@ -172,6 +172,22 @@ class AstTool {
             newKey,
             dictionary
           );
+        } else if (this.isArrayExpression(property.value)) {
+          let newKey = key;
+          if (prefix.length > 0) {
+            newKey = `${prefix}.${newKey}`;
+          }
+          (property.value as t.ArrayExpression).elements.forEach(
+            (element, index) => {
+              if (element) {
+                this.getAllI18nKeyAndValueFromObject(
+                  element as t.ObjectExpression,
+                  `${newKey}.${index}`,
+                  dictionary
+                );
+              }
+            }
+          );
         } else if (this.isStringLiteral(property.value)) {
           let value = property.value.value;
           if (value.includes('\n') || value.includes('\r')) {
@@ -227,6 +243,10 @@ class AstTool {
 
   private isObjectExpression(node: t.Node): node is t.ObjectExpression {
     return t.isObjectExpression(node);
+  }
+
+  private isArrayExpression(node: t.Node): node is t.ObjectExpression {
+    return t.isArrayExpression(node);
   }
 }
 

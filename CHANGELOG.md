@@ -2,6 +2,11 @@
 
 All notable changes to the react-i18n-prompt extension will be documented in this file.
 
+### [0.0.4]
+
+- [bugfix]: can not get text when i18n key in array in language package file.
+- [bugfix]: can not get script plugin for error workspace path in windows operator system.
+
 ### [0.0.3]
 
 - [bugfix]: the link of i18n key is not working in windows operator system.
