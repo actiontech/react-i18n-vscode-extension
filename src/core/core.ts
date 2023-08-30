@@ -88,10 +88,15 @@ class Core {
     }
     this._languageDictionary = new Map();
     this._languageFile = new Map();
-    const uris = await VscodeEvent.getFiles(
-      config.localePath,
-      config.localeExcludePath
-    );
+    let uris: vscode.Uri[] = [];
+    const localeExcludePathArray = config.localeExcludePath.split(';');
+    for (const excludePath of localeExcludePathArray) {
+      const currentUris = await VscodeEvent.getFiles(
+        config.localePath,
+        excludePath
+      );
+      uris = [...uris, ...currentUris];
+    }
     for (const uri of uris) {
       const fileContent = await fs.promises.readFile(uri.fsPath);
       const ast = this._astTool.parse(fileContent.toString());

@@ -6,6 +6,7 @@ All notable changes to the react-i18n-prompt extension will be documented in thi
 
 - [bugfix]: can not get text when i18n key in array in language package file.
 - [bugfix]: can not get script plugin for error workspace path in windows operator system.
+- [feature]: change the `react-i18n-prompt.language-package-exclude-path` to support multiple path which separated by ';'
 
 ### [0.0.3]
 

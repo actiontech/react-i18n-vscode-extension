@@ -45,7 +45,8 @@
           },
           "react-i18n-prompt.language-package-exclude-path": {
             "type": "string",
-            "default": "src/locale/zh-cn/**/index.{ts,js,tsx,jsx}"
+            "default": "src/locale/zh-cn/**/index.{ts,js,tsx,jsx}",
+            "description": "Multiple paths can be entered separated by ';'"
           },
           "react-i18n-prompt.language-key-prefix": {
             "type": "string",
