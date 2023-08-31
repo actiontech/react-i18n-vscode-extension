@@ -99,7 +99,7 @@ class VscodeEvent {
     if (!temp || temp.length === 0) {
       return;
     }
-    return temp[0].uri.path;
+    return temp[0].uri.fsPath;
   }
 
   public watchFileChanged(path: string) {

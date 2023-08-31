@@ -2,7 +2,7 @@
   "name": "react-i18n-prompt",
   "displayName": "React I18n Prompt Tool",
   "description": "i18n prompt tool, show language of i18n key, add link to i18n key, prompt i18n key when user input i18n key",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "Rain",
   "engines": {
     "vscode": "^1.58.0"
@@ -45,7 +45,8 @@
           },
           "react-i18n-prompt.language-package-exclude-path": {
             "type": "string",
-            "default": "src/locale/zh-cn/**/index.{ts,js,tsx,jsx}"
+            "default": "src/locale/zh-cn/**/index.{ts,js,tsx,jsx}",
+            "description": "Multiple paths can be entered separated by ';'"
           },
           "react-i18n-prompt.language-key-prefix": {
             "type": "string",

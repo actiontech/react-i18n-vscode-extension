@@ -63,6 +63,17 @@ class Core {
     VscodeEvent.insertI18nChinese(this._activeEditor, paramsLocations);
   }
 
+  public filterSameUris(originUris: vscode.Uri[], filterUris: vscode.Uri[]) {
+    let filterResult: vscode.Uri[] = [];
+    for (const filterItem of filterUris) {
+      const sameUri = originUris.find(
+        (originItem) => originItem.path === filterItem.path
+      );
+      if (!!sameUri) filterResult.push(filterItem);
+    }
+    return filterResult;
+  }
+
   public async findAllLanguageDictionary() {
     this._statusBarItem.notify('eye', 'Looking for i18n path...', false);
     const pluginFind = plugin.getAllI18nKeyAndValue();
@@ -88,10 +99,18 @@ class Core {
     }
     this._languageDictionary = new Map();
     this._languageFile = new Map();
-    const uris = await VscodeEvent.getFiles(
-      config.localePath,
-      config.localeExcludePath
-    );
+    let uris: vscode.Uri[] = [];
+    const localeExcludePathArray = config.localeExcludePath.split(';');
+    for (const excludePath of localeExcludePathArray) {
+      const currentUris = await VscodeEvent.getFiles(
+        config.localePath,
+        excludePath
+      );
+      uris = this.filterSameUris(
+        uris.length === 0 ? [...currentUris] : [...uris],
+        currentUris
+      );
+    }
     for (const uri of uris) {
       const fileContent = await fs.promises.readFile(uri.fsPath);
       const ast = this._astTool.parse(fileContent.toString());
